@@ -36,3 +36,10 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     return this.pool;
   }
 }
+
+console.log('DEBUG CONFIG -->', {
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER ? 'EXISTS (length: ' + process.env.DB_USER.length + ')' : 'MISSING/UNDEFINED',
+  database: process.env.DB_NAME,
+});
