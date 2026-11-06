@@ -20,10 +20,12 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       queueLimit: 0,
       ssl: { rejectUnauthorized: false },
     });
+
+    // Test the pool connection
     const conn = await this.pool.getConnection();
     await conn.ping();
     conn.release();
-    console.log('MySQL pool created');
+    console.log('MySQL pool created successfully');
   }
 
   async onModuleDestroy() {
