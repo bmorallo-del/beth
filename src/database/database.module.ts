@@ -1,5 +1,8 @@
 import { Module, Global } from '@nestjs/common';
 import { createPool } from 'mysql2/promise';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Global()
 @Module({
@@ -14,6 +17,9 @@ import { createPool } from 'mysql2/promise';
           password: process.env.DB_PASSWORD,
           database: process.env.DB_NAME,
           ssl: { rejectUnauthorized: false },
+          waitForConnections: true,
+          connectionLimit: 10,
+          queueLimit: 0,
         });
       },
     },
