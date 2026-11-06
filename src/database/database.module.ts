@@ -1,5 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import { createPool } from 'mysql2/promise';
+import { DatabaseService } from './database.service';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -7,6 +8,7 @@ dotenv.config();
 @Global()
 @Module({
   providers: [
+    DatabaseService,
     {
       provide: 'DATABASE_CONNECTION',
       useFactory: async () => {
@@ -24,6 +26,6 @@ dotenv.config();
       },
     },
   ],
-  exports: ['DATABASE_CONNECTION'],
+  exports: [DatabaseService, 'DATABASE_CONNECTION'],
 })
 export class DatabaseModule {}
