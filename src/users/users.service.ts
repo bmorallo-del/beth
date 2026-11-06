@@ -13,7 +13,7 @@ export class UsersService {
     const hashed = await bcrypt.hash(password, 10);
     try {
       const [result] = await this.pool().execute<OkPacket>(
-        'INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
+        'INSERT INTO users_auth (username, password, role) VALUES (?, ?, ?)',
         [username, hashed, role],
       );
       return { id: result.insertId, username, role };
@@ -27,7 +27,7 @@ export class UsersService {
 
   async findByUsername(username: string) {
     const [rows] = await this.pool().execute<RowDataPacket[]>(
-      'SELECT id, username, password, role, refresh_token FROM users WHERE username = ?',
+      'SELECT id, username, password, role, refresh_token FROM users_auth WHERE username = ?',
       [username],
     );
     return rows[0];
@@ -35,7 +35,7 @@ export class UsersService {
 
   async findById(id: number) {
     const [rows] = await this.pool().execute<RowDataPacket[]>(
-      'SELECT id, username, role, created_at FROM users WHERE id = ?',
+      'SELECT id, username, role, created_at FROM users_auth WHERE id = ?',
       [id],
     );
     return rows[0];
@@ -43,7 +43,7 @@ export class UsersService {
 
   async getAll() {
     const [rows] = await this.pool().execute<RowDataPacket[]>(
-      'SELECT id, username, role, created_at FROM users',
+      'SELECT id, username, role, created_at FROM users_auth',
     );
     return rows;
   }
@@ -66,23 +66,23 @@ export class UsersService {
     }
     if (fields.length === 0) return await this.findById(id);
     values.push(id);
-    const sql = `UPDATE users SET ${fields.join(', ')} WHERE id = ?`;
+    const sql = `UPDATE users_auth SET ${fields.join(', ')} WHERE id = ?`;
     await this.pool().execute(sql, values);
     return this.findById(id);
   }
 
   async deleteUser(id: number) {
-    const [res] = await this.pool().execute<OkPacket>('DELETE FROM users WHERE id = ?', [id]);
+    const [res] = await this.pool().execute<OkPacket>('DELETE FROM users_auth WHERE id = ?', [id]);
     return res.affectedRows > 0;
   }
 
   async setRefreshToken(id: number, refreshToken: string | null) {
-    await this.pool().execute('UPDATE users SET refresh_token = ? WHERE id = ?', [refreshToken, id]);
+    await this.pool().execute('UPDATE users_auth SET refresh_token = ? WHERE id = ?', [refreshToken, id]);
   }
 
   async findByRefreshToken(refreshToken: string) {
     const [rows] = await this.pool().execute<RowDataPacket[]>(
-      'SELECT id, username, role FROM users WHERE refresh_token = ?',
+      'SELECT id, username, role FROM users_auth WHERE refresh_token = ?',
       [refreshToken],
     );
     return rows[0];
