@@ -9,6 +9,17 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   pool!: mysql.Pool;
 
   async onModuleInit() {
+    // Validate that required database environment variables are present
+    const missingVars = ['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'].filter(
+      (v) => !process.env[v],
+    );
+
+    if (missingVars.length > 0) {
+      throw new Error(
+        `Missing required database environment variables: ${missingVars.join(', ')}. Please check your Render environment settings.`,
+      );
+    }
+
     this.pool = mysql.createPool({
       host: process.env.DB_HOST,
       port: +(process.env.DB_PORT || 3306),
